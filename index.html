@@ -10,8 +10,8 @@
             font-family: 'Inter', sans-serif;
             background-color: #191919;
         }
-        /* custom style for the primary orange buttons */
-        .btn-primary {
+        /* custom style for all log buttons to be amber with dark text */
+        .btn-log {
             background-color: #fea61f;
             color: #191919;
             font-weight: bold;
@@ -21,10 +21,10 @@
             transition-property: background-color, box-shadow;
             transition-duration: 200ms;
         }
-        .btn-primary:hover {
+        .btn-log:hover {
             background-color: #eb9d1b;
         }
-        .btn-primary:focus {
+        .btn-log:focus {
             outline: 2px solid transparent;
             outline-offset: 2px;
             box-shadow: 0 0 0 2px rgba(254, 166, 31, 0.5), 0 0 0 4px rgba(254, 166, 31, 0.25);
@@ -36,39 +36,24 @@
     <div class="bg-gray-800 p-8 rounded-2xl shadow-xl w-full max-w-md">
         <h1 class="text-3xl font-bold text-center text-gray-200 mb-6">Quick Log to Notion</h1>
 
-        <!-- input field for the log entry -->
-        <div class="mb-6">
-            <label for="logEntry" class="block text-gray-200 font-medium mb-1">what's on your mind?</label>
-            <input type="text" id="logEntry" name="logEntry" placeholder="log your thought, to-do, or idea"
-                   class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-200 placeholder-gray-400 transition duration-200">
-        </div>
-
         <!-- the main container for the buttons -->
         <div id="main-menu-container" class="space-y-3">
-            <button id="show-buttons" type="button" class="btn-primary w-full text-center">log something</button>
+            <button id="show-buttons" type="button" class="btn-log w-full text-center">log something</button>
             
             <!-- this container holds all the buttons and is hidden by default -->
             <div id="button-grid" class="hidden grid grid-cols-2 gap-3">
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="23d9ed6c1f7c81feabddc0cf75c933de">mood</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="2009ed6c1f7c81299df4df07c5f0a5fc">sleep</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="20a9ed6c1f7c808eae76c652ab1a858b">front log</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="2409ed6c1f7c80a88815e298b0e91a1c">energy</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="1fe9ed6c1f7c814c8be7e7bc98601910">skincare log</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="2209ed6c1f7c81cc8565e379734ec6ae">menstrual log</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="2089ed6c1f7c81e99c3fc5687984108b">finances log</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="2219ed6c1f7c808ca846dbf686fccd46">task log</button>
-                <button id="show-journals-btn" type="button" class="col-span-2 btn-primary">journals</button>
-            </div>
-        </div>
-
-        <!-- the journal sub-menu container -->
-        <div id="journal-menu-container" class="hidden space-y-3">
-            <button id="back-to-main" type="button" class="w-full bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition">back</button>
-            <div class="grid grid-cols-2 gap-3">
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="20a9ed6c1f7c8060a8ffe9f2a8d8d926">collective/general</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="20a9ed6c1f7c80edb19de4e4054fb955">memory log</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="20b9ed6c1f7c8022aaf6f929b52eba76">anger log</button>
-                <button type="button" class="bg-gray-900 text-gray-200 py-3 rounded-lg border border-gray-600 hover:bg-gray-700 transition" data-database-id="2069ed6c1f7c817fa435c9d24bb9b736">grimoire entries</button>
+                <button type="button" class="btn-log" data-database-id="23d9ed6c1f7c81feabddc0cf75c933de">mood</button>
+                <button type="button" class="btn-log" data-database-id="2009ed6c1f7c81299df4df07c5f0a5fc">sleep</button>
+                <button type="button" class="btn-log" data-database-id="20a9ed6c1f7c808eae76c652ab1a858b">front log</button>
+                <button type="button" class="btn-log" data-database-id="2409ed6c1f7c80a88815e298b0e91a1c">energy</button>
+                <button type="button" class="btn-log" data-database-id="1fe9ed6c1f7c814c8be7e7bc98601910">skincare log</button>
+                <button type="button" class="btn-log" data-database-id="2209ed6c1f7c81cc8565e379734ec6ae">menstrual log</button>
+                <button type="button" class="btn-log" data-database-id="2089ed6c1f7c81e99c3fc5687984108b">finances log</button>
+                <button type="button" class="btn-log" data-database-id="2219ed6c1f7c808ca846dbf686fccd46">task log</button>
+                <button type="button" class="btn-log" data-database-id="20a9ed6c1f7c8060a8ffe9f2a8d8d926">collective/general</button>
+                <button type="button" class="btn-log" data-database-id="20a9ed6c1f7c80edb19de4e4054fb955">memory log</button>
+                <button type="button" class="btn-log" data-database-id="20b9ed6c1f7c8022aaf6f929b52eba76">anger log</button>
+                <button type="button" class="btn-log" data-database-id="2069ed6c1f7c817fa435c9d24bb9b736">grimoire entries</button>
             </div>
         </div>
 
@@ -81,13 +66,8 @@
     <script>
         const WORKER_URL = "https://notion-secure-api.houseofmatez.workers.dev/";
 
-        const logEntryInput = document.getElementById('logEntry');
         const showButtonsBtn = document.getElementById('show-buttons');
         const buttonGrid = document.getElementById('button-grid');
-        const showJournalsBtn = document.getElementById('show-journals-btn');
-        const mainMenuContainer = document.getElementById('main-menu-container');
-        const journalMenuContainer = document.getElementById('journal-menu-container');
-        const backToMainBtn = document.getElementById('back-to-main');
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
 
@@ -112,18 +92,6 @@
             buttonGrid.classList.remove('hidden');
         });
 
-        // event listener for the "journals" button
-        showJournalsBtn.addEventListener('click', () => {
-            mainMenuContainer.classList.add('hidden');
-            journalMenuContainer.classList.remove('hidden');
-        });
-
-        // event listener for the "back" button
-        backToMainBtn.addEventListener('click', () => {
-            journalMenuContainer.classList.add('hidden');
-            mainMenuContainer.classList.remove('hidden');
-        });
-
         // event listener for all log buttons
         document.addEventListener('click', async (event) => {
             // check if the clicked element is one of the logging buttons
@@ -132,12 +100,9 @@
                 return;
             }
 
-            const logEntry = logEntryInput.value.trim();
-            if (!logEntry) {
-                showMessage("hey, the log entry can't be empty!", true);
-                return;
-            }
-
+            // use the button's text as the log entry
+            const logEntry = clickedButton.textContent;
+            
             const databaseId = clickedButton.getAttribute('data-database-id');
 
             const data = {
@@ -146,8 +111,7 @@
             };
 
             showMessage("logging your entry to notion...", false);
-            logEntryInput.disabled = true;
-
+            
             try {
                 const response = await fetch(WORKER_URL, {
                     method: 'POST',
@@ -157,7 +121,6 @@
 
                 if (response.ok) {
                     showMessage("logged successfully!", false);
-                    logEntryInput.value = '';
                 } else {
                     const error = await response.json();
                     showMessage(`oh no, something went wrong: ${error.message || 'unknown error'}`, true);
@@ -165,8 +128,6 @@
             } catch (error) {
                 console.error('error sending data:', error);
                 showMessage("a network error occurred. check your connection?", true);
-            } finally {
-                logEntryInput.disabled = false;
             }
         });
     </script>
