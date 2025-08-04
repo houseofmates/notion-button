@@ -35,10 +35,9 @@
 
     <div class="bg-[#373737] p-8 rounded-2xl shadow-xl w-full max-w-md">
 
+        <!-- the main container for the buttons, now always visible -->
         <div id="main-menu-container" class="space-y-3">
-            <button id="show-buttons" type="button" class="btn-log w-full text-center">log something</button>
-            
-            <div id="button-grid" class="hidden grid grid-cols-2 gap-3">
+            <div id="button-grid" class="grid grid-cols-2 gap-3">
                 <button type="button" class="btn-log" data-database-id="23d9ed6c1f7c81feabddc0cf75c933de">mood</button>
                 <button type="button" class="btn-log" data-database-id="2009ed6c1f7c81299df4df07c5f0a5fc">sleep</button>
                 <button type="button" class="btn-log" data-database-id="20a9ed6c1f7c808eae76c652ab1a858b">front log</button>
@@ -61,8 +60,6 @@
 
     <script>
         const WORKER_URL = "https://notion-secure-api.houseofmatez.workers.dev/";
-
-        const showButtonsBtn = document.getElementById('show-buttons');
         const buttonGrid = document.getElementById('button-grid');
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
@@ -82,25 +79,15 @@
             }, 3000);
         }
 
-        // event listener for the main "log something" button
-        showButtonsBtn.addEventListener('click', () => {
-            showButtonsBtn.classList.add('hidden');
-            buttonGrid.classList.remove('hidden');
-        });
-
         // event listener for all log buttons
         document.addEventListener('click', async (event) => {
-            // check if the clicked element is one of the logging buttons
             const clickedButton = event.target.closest('[data-database-id]');
             if (!clickedButton) {
                 return;
             }
 
-            // use the button's text as the log entry
             const logEntry = clickedButton.textContent;
-            
             const databaseId = clickedButton.getAttribute('data-database-id');
-
             const data = {
                 databaseId: databaseId,
                 logEntry: logEntry
@@ -115,14 +102,19 @@
                     body: JSON.stringify(data)
                 });
 
+                // log the response status to the console for debugging
+                console.log('notion api response status:', response.status);
+
                 if (response.ok) {
                     showMessage("logged successfully!", false);
                 } else {
                     const error = await response.json();
                     showMessage(`oh no, something went wrong: ${error.message || 'unknown error'}`, true);
+                    // log the full error to the console
+                    console.error('notion api error:', error);
                 }
             } catch (error) {
-                console.error('error sending data:', error);
+                console.error('fetch request failed:', error);
                 showMessage("a network error occurred. check your connection?", true);
             }
         });
