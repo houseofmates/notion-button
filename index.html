@@ -35,7 +35,14 @@
 
     <div class="bg-[#373737] p-8 rounded-2xl shadow-xl w-full max-w-md">
 
-        <!-- the main container for the buttons, now always visible -->
+        <!-- the input field for your log entry -->
+        <div class="mb-6">
+            <label for="logEntry" class="block text-gray-200 font-medium mb-1">what's on your mind?</label>
+            <input type="text" id="logEntry" name="logEntry" placeholder="log a thought or feeling"
+                   class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-200 placeholder-gray-400 transition duration-200">
+        </div>
+
+        <!-- the main container for the buttons -->
         <div id="main-menu-container" class="space-y-3">
             <div id="button-grid" class="grid grid-cols-2 gap-3">
                 <button type="button" class="btn-log" data-database-id="23d9ed6c1f7c81feabddc0cf75c933de">mood</button>
@@ -60,6 +67,7 @@
 
     <script>
         const WORKER_URL = "https://notion-secure-api.houseofmatez.workers.dev/";
+        const logEntryInput = document.getElementById('logEntry');
         const buttonGrid = document.getElementById('button-grid');
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
@@ -86,7 +94,12 @@
                 return;
             }
 
-            const logEntry = clickedButton.textContent;
+            const logEntry = logEntryInput.value.trim();
+            if (!logEntry) {
+                showMessage("hey, the log entry can't be empty!", true);
+                return;
+            }
+            
             const databaseId = clickedButton.getAttribute('data-database-id');
             const data = {
                 databaseId: databaseId,
@@ -102,15 +115,14 @@
                     body: JSON.stringify(data)
                 });
 
-                // log the response status to the console for debugging
                 console.log('notion api response status:', response.status);
 
                 if (response.ok) {
                     showMessage("logged successfully!", false);
+                    logEntryInput.value = ''; // clear the input after a successful log
                 } else {
                     const error = await response.json();
                     showMessage(`oh no, something went wrong: ${error.message || 'unknown error'}`, true);
-                    // log the full error to the console
                     console.error('notion api error:', error);
                 }
             } catch (error) {
