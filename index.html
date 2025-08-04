@@ -9,27 +9,30 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            /* set the body background color to your preferred dark shade */
+            background-color: #191919;
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<!-- the bg-gray-100 class is removed here and handled by custom css above -->
+<body class="flex items-center justify-center min-h-screen p-4 text-gray-200">
 
     <!-- this is the main container for the entire widget -->
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Quick Log to Notion</h1>
+    <div class="bg-gray-800 p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-gray-200 mb-6">Quick Log to Notion</h1>
         
         <!-- the form to take user input -->
         <form id="logForm" class="space-y-4">
             <div>
-                <label for="logEntry" class="block text-gray-700 font-medium mb-1">what's on your mind?</label>
+                <label for="logEntry" class="block text-gray-200 font-medium mb-1">what's on your mind?</label>
                 <input type="text" id="logEntry" name="logEntry" placeholder="log your thought, to-do, or idea"
-                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+                       class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-200 placeholder-gray-400 transition duration-200">
             </div>
             
             <div>
-                <label for="databaseSelect" class="block text-gray-700 font-medium mb-1">where should this go?</label>
+                <label for="databaseSelect" class="block text-gray-200 font-medium mb-1">where should this go?</label>
                 <select id="databaseSelect" name="databaseSelect"
-                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 text-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 transition duration-200">
                     <!-- these options are pre-filled with your database information -->
                     <option value="987b28206d2d4d8c83a54d588506087b">journal</option>
                     <option value="9924c58f0010411a8c886e3f0535e62f">medication tracker</option>
@@ -39,13 +42,13 @@
             </div>
 
             <button type="submit"
-                    class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    class="w-full bg-[#fea61f] text-gray-900 font-bold py-3 px-4 rounded-lg shadow-md hover:bg-[#eb9d1b] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-gray-900">
                 Log It
             </button>
         </form>
 
         <!-- a message box to show success or error messages to the user -->
-        <div id="messageBox" class="mt-6 hidden">
+        <div id="messageBox" class="mt-6 hidden p-3 rounded-lg">
             <p id="messageText" class="text-center font-medium"></p>
         </div>
     </div>
@@ -66,11 +69,13 @@
             messageText.textContent = text;
             messageBox.classList.remove('hidden');
             if (isError) {
-                messageBox.classList.remove('bg-green-100', 'text-green-800');
-                messageBox.classList.add('bg-red-100', 'text-red-800');
+                // these colors are updated for the dark theme
+                messageBox.classList.remove('bg-green-800', 'text-green-200');
+                messageBox.classList.add('bg-red-800', 'text-red-200');
             } else {
-                messageBox.classList.remove('bg-red-100', 'text-red-800');
-                messageBox.classList.add('bg-green-100', 'text-green-800');
+                // these colors are updated for the dark theme
+                messageBox.classList.remove('bg-red-800', 'text-red-200');
+                messageBox.classList.add('bg-green-800', 'text-green-200');
             }
             setTimeout(() => {
                 messageBox.classList.add('hidden');
