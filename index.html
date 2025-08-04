@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aidan's Notion Log Widget</title>
+  <title>notion log widget</title>
   <!-- Tailwind CSS for styling -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Framer Motion for animations -->
@@ -36,7 +36,7 @@
 
     // IMPORTANT: Replace this with the URL of your deployed Cloudflare Worker.
     // This worker will securely handle the Notion API call using your secret key.
-    const WORKER_URL = "https://notion-api-worker-igc.pages.dev/";
+    const WORKER_URL = "notion-secure-api.houseofmatez.workers.dev";
 
     // This is the core App component for the widget.
     const App = () => {
@@ -254,4 +254,5 @@
     root.render(<App />);
   </script>
 </body>
+
 </html>
