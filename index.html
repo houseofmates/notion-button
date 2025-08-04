@@ -35,99 +35,44 @@
 
     <div class="bg-[#373737] p-8 rounded-2xl shadow-xl w-full max-w-md">
 
-        <!-- the input field for your log entry -->
-        <div class="mb-6">
-            <label for="logEntry" class="block text-gray-200 font-medium mb-1">what's on your mind?</label>
-            <input type="text" id="logEntry" name="logEntry" placeholder="log a thought or feeling"
-                   class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-200 placeholder-gray-400 transition duration-200">
-        </div>
-
         <!-- the main container for the buttons -->
         <div id="main-menu-container" class="space-y-3">
-            <div id="button-grid" class="grid grid-cols-2 gap-3">
-                <button type="button" class="btn-log" data-database-id="23d9ed6c1f7c81feabddc0cf75c933de">mood</button>
-                <button type="button" class="btn-log" data-database-id="2009ed6c1f7c81299df4df07c5f0a5fc">sleep</button>
-                <button type="button" class="btn-log" data-database-id="20a9ed6c1f7c808eae76c652ab1a858b">front log</button>
-                <button type="button" class="btn-log" data-database-id="2409ed6c1f7c80a88815e298b0e91a1c">energy</button>
-                <button type="button" class="btn-log" data-database-id="1fe9ed6c1f7c814c8be7e7bc98601910">skincare log</button>
-                <button type="button" class="btn-log" data-database-id="2209ed6c1f7c81cc8565e379734ec6ae">menstrual log</button>
-                <button type="button" class="btn-log" data-database-id="2089ed6c1f7c81e99c3fc5687984108b">finances log</button>
-                <button type="button" class="btn-log" data-database-id="2219ed6c1f7c808ca846dbf686fccd46">task log</button>
-                <button type="button" class="btn-log" data-database-id="20a9ed6c1f7c8060a8ffe9f2a8d8d926">collective/general</button>
-                <button type="button" class="btn-log" data-database-id="20a9ed6c1f7c80edb19de4e4054fb955">memory log</button>
-                <button type="button" class="btn-log" data-database-id="20b9ed6c1f7c8022aaf6f929b52eba76">anger log</button>
-                <button type="button" class="btn-log" data-database-id="2069ed6c1f7c817fa435c9d24bb9b736">grimoire entries</button>
+            <button id="show-buttons" type="button" class="btn-log w-full text-center">open forms</button>
+            
+            <!-- this container holds all the buttons and is hidden by default -->
+            <div id="button-grid" class="hidden grid grid-cols-2 gap-3">
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c80bb9b0be299a2b585b4?pvs=106">grimoire</button>
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c8046b52ef4fdfc8569b8?pvs=106">mood</button>
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c811e9af6cc587d1092ff?pvs=106">energy</button>
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/21d9ed6c1f7c804992b6ce4478386ae7?pvs=106">sleep log</button>
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/21a9ed6c1f7c8085be4ad505ec9145e9?pvs=106">medications</button>
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/21a9ed6c1f7c8085be4ad505ec9145e9?pvs=106">income/expenses log</button>
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2219ed6c1f7c80f19898d8f45b515a5d?pvs=106">period log</button>
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c806e86d6c71fd81235b4?pvs=106">tasks</button>
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/21d9ed6c1f7c80cda804d173a688333b?pvs=106">anger log</button>
+                <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c800296b4d5aee9024b3d?pvs=106">healing log</button>
+                <button type="button" class="btn-log col-span-2" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c80b6b709df39991abb0c?pvs=106">interactions w/ aphrodite</button>
             </div>
         </div>
 
-        <div id="messageBox" class="mt-6 hidden p-3 rounded-lg">
-            <p id="messageText" class="text-center font-medium"></p>
-        </div>
     </div>
 
     <script>
-        const WORKER_URL = "https://notion-secure-api.houseofmatez.workers.dev/";
-        const logEntryInput = document.getElementById('logEntry');
+        const showButtonsBtn = document.getElementById('show-buttons');
         const buttonGrid = document.getElementById('button-grid');
-        const messageBox = document.getElementById('messageBox');
-        const messageText = document.getElementById('messageText');
-
-        function showMessage(text, isError = false) {
-            messageText.textContent = text;
-            messageBox.classList.remove('hidden');
-            if (isError) {
-                messageBox.classList.remove('bg-green-800', 'text-green-200');
-                messageBox.classList.add('bg-red-800', 'text-red-200');
-            } else {
-                messageBox.classList.remove('bg-red-800', 'text-red-200');
-                messageBox.classList.add('bg-green-800', 'text-green-200');
-            }
-            setTimeout(() => {
-                messageBox.classList.add('hidden');
-            }, 3000);
-        }
+        
+        // event listener for the main "open forms" button
+        showButtonsBtn.addEventListener('click', () => {
+            showButtonsBtn.classList.add('hidden');
+            buttonGrid.classList.remove('hidden');
+        });
 
         // event listener for all log buttons
-        document.addEventListener('click', async (event) => {
-            const clickedButton = event.target.closest('[data-database-id]');
-            if (!clickedButton) {
-                return;
-            }
-
-            const logEntry = logEntryInput.value.trim();
-            if (!logEntry) {
-                showMessage("hey, the log entry can't be empty!", true);
-                return;
-            }
-            
-            const databaseId = clickedButton.getAttribute('data-database-id');
-            const data = {
-                databaseId: databaseId,
-                logEntry: logEntry
-            };
-
-            showMessage("logging your entry to notion...", false);
-            
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                console.log('notion api response status:', response.status);
-
-                if (response.ok) {
-                    showMessage("logged successfully!", false);
-                    logEntryInput.value = ''; // clear the input after a successful log
-                } else {
-                    const error = await response.json();
-                    showMessage(`oh no, something went wrong: ${error.message || 'unknown error'}`, true);
-                    console.error('notion api error:', error);
-                }
-            } catch (error) {
-                console.error('fetch request failed:', error);
-                showMessage("a network error occurred. check your connection?", true);
+        document.addEventListener('click', (event) => {
+            const clickedButton = event.target.closest('[data-form-url]');
+            if (clickedButton) {
+                const formUrl = clickedButton.getAttribute('data-form-url');
+                window.open(formUrl, '_blank');
             }
         });
     </script>
