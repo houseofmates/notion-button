@@ -1,258 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>notion log widget</title>
-  <!-- Tailwind CSS for styling -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Framer Motion for animations -->
-  <script src="https://cdn.jsdelivr.net/npm/framer-motion@10.12.16/dist/framer-motion.min.js"></script>
-  <!-- React and ReactDOM for the component -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <!-- Babel to compile the JSX -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    body {
-      background-color: #191919;
-      color: #fafafa;
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      overflow: hidden; /* Hide scrollbars */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notion Logger</title>
+    <!-- load the tailwind css framework for beautiful styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
-  <div id="root"></div>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-  <script type="text/babel">
-    const { useState } = React;
-    const { AnimatePresence, motion } = window.FramerMotion;
-
-    // IMPORTANT: Replace this with the URL of your deployed Cloudflare Worker.
-    // This worker will securely handle the Notion API call using your secret key.
-    const WORKER_URL = "notion-secure-api.houseofmatez.workers.dev";
-
-    // This is the core App component for the widget.
-    const App = () => {
-      const [isMenuOpen, setIsMenuOpen] = useState(false);
-      const [selectedLog, setSelectedLog] = useState(null);
-      const [loading, setLoading] = useState(false);
-      const [message, setMessage] = useState('');
-
-      // The database IDs provided by House.
-      // These are stored here so the menu can be dynamically generated.
-      // We'll use these to send the data to the correct Notion database.
-      const databaseIds = {
-        "mood": "23d9ed6c1f7c81feabddc0cf75c933de",
-        "sleep": "2009ed6c1f7c81299df4df07c5f0a5fc",
-        "front log": "20a9ed6c1f7c808eae76c652ab1a858b",
-        "energy": "2409ed6c1f7c80a88815e298b0e91a1c",
-        "skincare log": "1fe9ed6c1f7c814c8be7e7bc98601910",
-        "menstrual log": "2209ed6c1f7c81cc8565e379734ec6ae",
-        "finances/income expense log": "2089ed6c1f7c81e99c3fc5687984108b",
-        "task log/appointments/reminders": "2219ed6c1f7c808ca846dbf686fccd46",
-        "collective/general journal": "20a9ed6c1f7c8060a8ffe9f2a8d8d926",
-        "memory log": "20a9ed6c1f7c80edb19de4e4054fb955",
-        "anger log": "20b9ed6c1f7c8022aaf6f929b52eba76",
-        "grimoire entries": "2069ed6c1f7c817fa435c9d24bb9b736",
-        "therapy sessions (or psychiatry)": "20a9ed6c1f7c8194a550c0371c4d3a91"
-      };
-
-      // This function will be called when a log button is clicked.
-      const handleLogClick = (logName) => {
-        setSelectedLog(logName);
-        setIsMenuOpen(false);
-      };
-
-      // This function will make the API call to our Cloudflare Worker.
-      const handleNotionAPI = async (logName, logEntry) => {
-        setLoading(true);
-        setMessage('');
-
-        const databaseId = databaseIds[logName];
-        if (!databaseId) {
-          setMessage(`error: database id not found for "${logName}".`);
-          setLoading(false);
-          return;
-        }
-
-        const payload = {
-          databaseId,
-          logEntry
-        };
-
-        try {
-          // We are now fetching the worker URL instead of the Notion API directly.
-          const response = await fetch(WORKER_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-          });
-
-          if (response.ok) {
-            setMessage(`entry logged successfully to '${logName}'.`);
-          } else {
-            const errorData = await response.json();
-            console.error('worker/notion api error:', errorData);
-            setMessage(`failed to log entry to '${logName}'. check the console for details.`);
-          }
-        } catch (error) {
-          console.error('network error:', error);
-          setMessage('a network error occurred. please try again.');
-        } finally {
-          setLoading(false);
-          setSelectedLog(null); // Close the form after submission.
-        }
-      };
-
-      // A simple form component to handle the log entry input.
-      const LogEntryForm = ({ logName }) => {
-        const [logEntry, setLogEntry] = useState('');
-
-        const handleSubmit = (e) => {
-          e.preventDefault();
-          if (logEntry.trim()) {
-            handleNotionAPI(logName, logEntry);
-          } else {
-            setMessage('log entry cannot be empty.');
-          }
-        };
-
-        return (
-          <motion.form
-            onSubmit={handleSubmit}
-            className="flex flex-col items-center space-y-4"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-          >
-            <h3 className="text-xl font-bold capitalize text-orange-400">{logName}</h3>
-            <input
-              type="text"
-              value={logEntry}
-              onChange={(e) => setLogEntry(e.target.value)}
-              placeholder="write your log entry here..."
-              className="w-full max-w-sm px-4 py-2 text-gray-900 placeholder-gray-500 bg-gray-200 border-2 border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
-              disabled={loading}
-            />
-            <div className="flex space-x-2">
-              <button
-                type="submit"
-                className="px-6 py-2 text-sm font-semibold text-gray-900 transition-all duration-300 ease-in-out transform bg-orange-400 rounded-full shadow-lg hover:scale-105 active:scale-95 hover:bg-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50"
-                disabled={loading}
-              >
-                {loading ? 'Logging...' : 'Log Entry'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedLog(null)}
-                className="px-6 py-2 text-sm font-semibold text-gray-900 transition-all duration-300 ease-in-out transform bg-gray-400 rounded-full shadow-lg hover:scale-105 active:scale-95 hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50"
-                disabled={loading}
-              >
-                Cancel
-              </button>
+    <!-- this is the main container for the entire widget -->
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Quick Log to Notion</h1>
+        
+        <!-- the form to take user input -->
+        <form id="logForm" class="space-y-4">
+            <div>
+                <label for="logEntry" class="block text-gray-700 font-medium mb-1">what's on your mind?</label>
+                <input type="text" id="logEntry" name="logEntry" placeholder="log your thought, to-do, or idea"
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
             </div>
-          </motion.form>
-        );
-      };
+            
+            <div>
+                <label for="databaseSelect" class="block text-gray-700 font-medium mb-1">where should this go?</label>
+                <select id="databaseSelect" name="databaseSelect"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+                    <!-- these options are pre-filled with your database information -->
+                    <option value="987b28206d2d4d8c83a54d588506087b">journal</option>
+                    <option value="9924c58f0010411a8c886e3f0535e62f">medication tracker</option>
+                    <option value="8b111818b2c8421896792750e6912442">meal log</option>
+                    <option value="3956461a35754546a16d7a464506c278">to-do list</option>
+                </select>
+            </div>
 
-      // The variant for the menu container to create a stagger animation.
-      const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: {
-            staggerChildren: 0.05,
-          },
-        },
-      };
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Log It
+            </button>
+        </form>
 
-      // The variant for each individual button in the menu.
-      const buttonVariants = {
-        hidden: { y: -20, opacity: 0 },
-        visible: { y: 0, opacity: 1 },
-      };
-
-      return (
-        <div className="flex items-center justify-center min-h-screen p-4 bg-gray-900 font-sans">
-          <div className="relative">
-            <AnimatePresence mode="wait">
-              {!isMenuOpen && !selectedLog && (
-                <motion.button
-                  key="main-button"
-                  onClick={() => setIsMenuOpen(true)}
-                  className="w-48 h-12 text-sm font-semibold text-gray-900 transition-all duration-300 ease-in-out transform bg-[#ffa520] rounded-full shadow-lg hover:scale-105 active:scale-95 hover:bg-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
-                >
-                  Log an Entry
-                </motion.button>
-              )}
-              {isMenuOpen && (
-                <motion.div
-                  key="menu"
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center space-y-2"
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                >
-                  {Object.keys(databaseIds).map((logName) => (
-                    <motion.button
-                      key={logName}
-                      onClick={() => handleLogClick(logName)}
-                      className="w-48 text-center text-sm font-medium text-orange-400 bg-[#191919] rounded-full px-4 py-2 shadow-inner transition-all duration-200 ease-in-out transform hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-gray-900"
-                      variants={buttonVariants}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {logName}
-                    </motion.button>
-                  ))}
-                  <motion.button
-                    key="close-button"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="mt-4 text-sm text-gray-500 hover:text-gray-400 transition-colors duration-200"
-                    variants={buttonVariants}
-                  >
-                    Close
-                  </motion.button>
-                </motion.div>
-              )}
-              {selectedLog && (
-                <LogEntryForm logName={selectedLog} />
-              )}
-              {message && (
-                <motion.div
-                  key="message"
-                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full text-white text-sm"
-                  style={{ backgroundColor: message.startsWith('Error') || message.startsWith('failed') ? '#ef4444' : '#10b981' }}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: 20, opacity: 0 }}
-                >
-                  {message}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+        <!-- a message box to show success or error messages to the user -->
+        <div id="messageBox" class="mt-6 hidden">
+            <p id="messageText" class="text-center font-medium"></p>
         </div>
-      );
-    };
+    </div>
 
-    const container = document.getElementById('root');
-    const root = ReactDOM.createRoot(container);
-    root.render(<App />);
-  </script>
+    <script>
+        // the url for your cloudflare worker.
+        // this is the secure messenger you set up to protect your api key.
+        const WORKER_URL = "https://notion-secure-api.houseofmatez.workers.dev/";
+
+        const logForm = document.getElementById('logForm');
+        const logEntryInput = document.getElementById('logEntry');
+        const databaseSelect = document.getElementById('databaseSelect');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+
+        // this function shows a message to the user for a few seconds.
+        function showMessage(text, isError = false) {
+            messageText.textContent = text;
+            messageBox.classList.remove('hidden');
+            if (isError) {
+                messageBox.classList.remove('bg-green-100', 'text-green-800');
+                messageBox.classList.add('bg-red-100', 'text-red-800');
+            } else {
+                messageBox.classList.remove('bg-red-100', 'text-red-800');
+                messageBox.classList.add('bg-green-100', 'text-green-800');
+            }
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 3000);
+        }
+
+        // event listener for when the form is submitted.
+        logForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // prevents the page from reloading.
+
+            const logEntry = logEntryInput.value.trim();
+            if (!logEntry) {
+                showMessage("hey, the log entry can't be empty!", true);
+                return;
+            }
+
+            // get the selected database ID from the dropdown menu.
+            const databaseId = databaseSelect.value;
+            if (!databaseId) {
+                showMessage("please select a database to log to.", true);
+                return;
+            }
+
+            // prepare the data to be sent to the cloudflare worker.
+            const data = {
+                databaseId: databaseId,
+                logEntry: logEntry
+            };
+
+            // show a loading message while we wait for the response.
+            showMessage("logging your entry to notion...", false);
+            logEntryInput.disabled = true;
+
+            try {
+                // make the api call to the cloudflare worker.
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // if the request was successful...
+                    const result = await response.json();
+                    showMessage("logged successfully!", false);
+                    logEntryInput.value = ''; // clear the input field.
+                } else {
+                    // if there was an error from the worker...
+                    const error = await response.json();
+                    showMessage(`oh no, something went wrong: ${error.message || 'unknown error'}`, true);
+                }
+            } catch (error) {
+                // if there was a network error...
+                console.error('error sending data:', error);
+                showMessage("a network error occurred. check your connection?", true);
+            } finally {
+                // always re-enable the input field.
+                logEntryInput.disabled = false;
+            }
+        });
+    </script>
 </body>
-
 </html>
