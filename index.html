@@ -9,6 +9,7 @@
         body {
             font-family: 'inter', sans-serif;
             background-color: #191919;
+            overflow: hidden; /* prevents body scroll when iframe is shown */
         }
         /* custom style for all log buttons to be amber with dark text */
         .btn-log {
@@ -35,12 +36,10 @@
 
     <div class="bg-[#373737] p-8 rounded-2xl shadow-xl w-full max-w-md">
 
-        <!-- the main container for the buttons -->
-        <div id="main-menu-container" class="space-y-3">
-            <button id="show-buttons" type="button" class="btn-log w-full text-center">open forms</button>
-            
-            <!-- this container holds all the buttons and is hidden by default -->
-            <div id="button-grid" class="hidden grid grid-cols-2 gap-3">
+        <!-- main button grid, visible on initial load -->
+        <div id="button-grid-container" class="space-y-3">
+            <h1 class="text-3xl font-bold text-center mb-6 text-gray-200">open notion form</h1>
+            <div id="button-grid" class="grid grid-cols-2 gap-3">
                 <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c80bb9b0be299a2b585b4?pvs=106">grimoire</button>
                 <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c8046b52ef4fdfc8569b8?pvs=106">mood</button>
                 <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c811e9af6cc587d1092ff?pvs=106">energy</button>
@@ -55,25 +54,41 @@
             </div>
         </div>
 
+        <!-- iframe container, hidden until a button is clicked -->
+        <div id="iframe-container" class="hidden">
+            <button id="back-button" class="btn-log w-full text-center mb-3">back to buttons</button>
+            <iframe id="notion-iframe" class="w-full h-[600px] rounded-lg border-none" frameborder="0"></iframe>
+        </div>
+
     </div>
 
     <script>
-        const showButtonsBtn = document.getElementById('show-buttons');
-        const buttonGrid = document.getElementById('button-grid');
-        
-        // event listener for the main "open forms" button
-        showButtonsBtn.addEventListener('click', () => {
-            showButtonsBtn.classList.add('hidden');
-            buttonGrid.classList.remove('hidden');
-        });
+        const buttonGridContainer = document.getElementById('button-grid-container');
+        const iframeContainer = document.getElementById('iframe-container');
+        const notionIframe = document.getElementById('notion-iframe');
+        const backButton = document.getElementById('back-button');
 
         // event listener for all log buttons
         document.addEventListener('click', (event) => {
             const clickedButton = event.target.closest('[data-form-url]');
             if (clickedButton) {
                 const formUrl = clickedButton.getAttribute('data-form-url');
-                window.open(formUrl, '_blank');
+                
+                // set the iframe source to the notion form url
+                notionIframe.src = formUrl;
+
+                // hide the buttons and show the iframe container
+                buttonGridContainer.classList.add('hidden');
+                iframeContainer.classList.remove('hidden');
             }
+        });
+
+        // event listener for the back button
+        backButton.addEventListener('click', () => {
+            // hide the iframe and show the buttons
+            iframeContainer.classList.add('hidden');
+            buttonGridContainer.classList.remove('hidden');
+            notionIframe.src = ''; // clear the iframe source
         });
     </script>
 </body>
