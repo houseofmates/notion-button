@@ -35,7 +35,7 @@
 
     <div class="bg-[#373737] p-8 rounded-2xl shadow-xl w-full max-w-md">
 
-        <!-- the main container for the buttons, now always visible on load -->
+        <!-- the main container for the buttons, always visible on load -->
         <div id="button-grid" class="grid grid-cols-2 gap-3">
             <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c80bb9b0be299a2b585b4?pvs=106">grimoire</button>
             <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c8046b52ef4fdfc8569b8?pvs=106">mood</button>
@@ -49,15 +49,48 @@
             <button type="button" class="btn-log" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c800296b4d5aee9024b3d?pvs=106">healing log</button>
             <button type="button" class="btn-log col-span-2" data-form-url="https://www.notion.so/houseofmates/2459ed6c1f7c80b6b709df39991abb0c?pvs=106">interactions w/ aphrodite</button>
         </div>
+
+        <!-- the modal popup, hidden by default -->
+        <div id="modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 hidden">
+            <div class="bg-[#373737] p-6 rounded-2xl shadow-xl max-w-sm w-full space-y-4">
+                <p id="modal-text" class="text-center text-lg font-medium">this will open a new tab.</p>
+                <button id="modal-button" class="btn-log w-full text-center">go to form</button>
+                <button id="close-modal-button" class="btn-log w-full text-center bg-gray-500 hover:bg-gray-600">cancel</button>
+            </div>
+        </div>
+
     </div>
 
     <script>
+        const buttonGrid = document.getElementById('button-grid');
+        const modal = document.getElementById('modal');
+        const modalButton = document.getElementById('modal-button');
+        const closeModalButton = document.getElementById('close-modal-button');
+        
+        let currentFormUrl = '';
+
+        // event listener for all log buttons
         document.addEventListener('click', (event) => {
             const clickedButton = event.target.closest('[data-form-url]');
             if (clickedButton) {
-                const formUrl = clickedButton.getAttribute('data-form-url');
-                window.open(formUrl, '_blank');
+                currentFormUrl = clickedButton.getAttribute('data-form-url');
+                
+                // show the modal
+                modal.classList.remove('hidden');
             }
+        });
+
+        // event listener for the button inside the modal
+        modalButton.addEventListener('click', () => {
+            if (currentFormUrl) {
+                window.open(currentFormUrl, '_blank');
+                modal.classList.add('hidden');
+            }
+        });
+
+        // event listener to close the modal
+        closeModalButton.addEventListener('click', () => {
+            modal.classList.add('hidden');
         });
     </script>
 </body>
